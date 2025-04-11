@@ -1,0 +1,4 @@
+hooks:
+  pre-start:
+    - exec-host: export DDEV_VERSION=$(ddev --version | awk '{print $3}')
+    - exec-host: docker login $registry_url -u $registry_user -p $registry_pass
