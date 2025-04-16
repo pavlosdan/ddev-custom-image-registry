@@ -2,6 +2,7 @@ name: ddev-custom-image-registry
 
 project_files:
   - docker-compose.ddev-custom-image-registry.yaml
+  - config.ddev-custom-image-registry.yaml
   - .env.ddev-custom-image-registry.example
 
 ddev_version_constraint: '>= v1.24.2'
