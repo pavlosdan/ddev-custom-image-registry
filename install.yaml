@@ -1,21 +1,19 @@
 name: ddev-custom-image-registry
 
 project_files:
-  - docker-compose.ddev-custom-image-registry.yaml
-  - config.ddev-custom-image-registry.yaml
-  - .env.ddev-custom-image-registry.example
+  - private-registry.yml.example: .ddev/private-registry.yml
+  - scripts/pre-start.sh: .ddev/commands/host/pre-start-private-registry
+other_items:
+  - env.ddev-custom-image-registry.example
+  - scripts/ask-credentials.sh
+  - scripts/apply-config.sh
+  - scripts/remove.sh
 
 ddev_version_constraint: '>= v1.24.2'
 
-post_install_actions:
-  - |
-    if [ ! -f .env.ddev-custom-image-registry ]; then
-      cp .env.ddev-custom-image-registry.example .env.ddev-custom-image-registry
-      echo "Created .env.ddev-custom-image-registry. Please update it with your custom registry details before running 'ddev start'.\n"
-      echo "Alternatively, add the variables as environment variables on the host.\n"
-    fi
-  - |
-    if ! grep -q "^/env.ddev-custom-image-registry$" .gitignore; then
-      echo ".env.ddev-custom-image-registry" >> .gitignore
-      echo "Added .env.ddev-custom-image-registry to .gitignore.\n"
-    fi
+actions:
+  post_install:
+    - exec-host: ["bash", "scripts/ask-credentials.sh"]
+    - exec-host: ["bash", "scripts/apply-config.sh"]
+  removal:
+    - exec-host: ["bash", "scripts/remove.sh"]

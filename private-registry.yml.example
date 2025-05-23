@@ -1,4 +1,4 @@
-registry_images:
+images:
   - ddev/ddev-webserver
   - ddev/ddev-dbserver-mysql-5.7
   - ddev/ddev-ssh-agent
