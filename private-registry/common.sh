@@ -16,14 +16,14 @@ prompt() {
   local _val=""
   if [[ -t 0 ]]; then
     if [[ "$_silent" == "silent" ]]; then
-      read -s -r -p "${_msg}${_def:+ [${_def}]}: " _val
+      read -s -r -p "${_msg}: " _val
       printf '\n'
     else
       read -r -p "${_msg}${_def:+ [${_def}]}: " _val
     fi
   fi
   _val="${_val:-${_def}}"
-  printf -v "$_var" "%s" "$_val" 
+  printf -v "$_var" "%s" "$_val"
 }
 
 save_env() {
