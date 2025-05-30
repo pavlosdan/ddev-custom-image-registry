@@ -2,8 +2,7 @@
 #ddev-generated
 
 set -e
-PR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$PR_DIR"/common.sh
+source "$DDEV_APPROOT"/.ddev/private-registry/common.sh
 
 DAEMON_FILE="/etc/docker/daemon.json"
 BACKUP="/etc/docker/daemon.ddev.bak"

@@ -2,11 +2,10 @@
 #ddev-generated
 
 # Run at every `ddev start`.
-PR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$PR_DIR/common.sh"
+source "$DDEV_APPROOT"/.ddev/private-registry/common.sh
 
 docker_login
 
 if [[ "$PR_MODE" == "rewrite" ]]; then
-  bash "$PR_DIR/rewrite-mode.sh" --generate
+  bash "$DDEV_APPROOT/.ddev/private-registry/rewrite-mode.sh" --generate
 fi

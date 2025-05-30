@@ -2,13 +2,11 @@
 #ddev-generated
 
 set -e
-PR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$PR_DIR"/common.sh
+source "$DDEV_APPROOT"/.ddev/private-registry/common.sh
 
-PROJECT_DIR="$(cd "$PR_DIR/.." && pwd)"
-OUTPUT_FILE="$PROJECT_DIR/docker-compose.ddev-private-registry.yaml"
-CONFIG_FILE="$PR_DIR/config.yml"
-[[ -f "$CONFIG_FILE" ]] || CONFIG_FILE="$PR_DIR/config.example.yml"
+OUTPUT_FILE="$DDEV_APPROOT/.ddev/docker-compose.ddev-private-registry.yaml"
+CONFIG_FILE="$DDEV_APPROOT/.ddev/private-registry/config.yml"
+[[ -f "$CONFIG_FILE" ]] || CONFIG_FILE="$DDEV_APPROOT/.ddev/private-registry/config.example.yml"
 
 [[ -z "${REGISTRY_URL:-}" ]] && { echo "private-registry: REGISTRY_URL not configured, skipping override."; exit 0; }
 

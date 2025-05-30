@@ -2,8 +2,7 @@
 #ddev-generated
 
 set -e
-PR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$PR_DIR"/common.sh
+source "$DDEV_APPROOT"/.ddev/private-registry/common.sh
 
 usage() {
 cat <<USAGE
@@ -17,7 +16,7 @@ case "${1:-}" in
   uninstall)
     echo "Removing configuration..."
     rm -f "$ENV_FILE"
-    "$PR_DIR/daemon-mode.sh" --unapply || true
+    "$DDEV_APPROOT/.ddev/private-registry/daemon-mode.sh" --unapply || true
     echo "Done."
     exit 0
     ;;
@@ -40,13 +39,13 @@ echo "=== DDEV Private Registry setup ==="
 prompt REGISTRY_URL "Mirror URL (e.g. registry.mycorp.com)" "${REGISTRY_URL:-}"
 prompt REGISTRY_USER "Username" "${REGISTRY_USER:-}"
 prompt REGISTRY_PASS "Password (no output will be displayed)" "${REGISTRY_PASS:-}" silent
-prompt PR_MODE "Mode [rewrite/daemon]" "${PR_MODE:-rewrite}"
+prompt PR_MODE "Mode [rewrite/daemon (Daemon mode is only supported on Linux currently)]" "${PR_MODE:-rewrite}"
 
 save_env
 echo "Configuration saved to $ENV_FILE"
 
 if [[ "$PR_MODE" == "daemon" ]]; then
-  bash "$PR_DIR/daemon-mode.sh" --apply
+  bash "$DDEV_APPROOT/.ddev/private-registry/daemon-mode.sh" --apply
 else
   echo "Rewrite mode selected. No system changes needed."
 fi
