@@ -1,0 +1,5 @@
+#ddev-generated
+
+hooks:
+  pre-start:
+    - exec-host: "# bash ${DDEV_APPROOT}/.ddev/private-registry/private-registry.sh"

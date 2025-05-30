@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#ddev-generated
+
+PR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../private-registry" && pwd)"
+case "${1:-}" in
+  setup|"") exec "$PR_DIR/install.sh" setup ;;
+  mode) shift; exec "$PR_DIR/install.sh" mode "$@" ;;
+  uninstall) exec "$PR_DIR/install.sh" uninstall ;;
+  *) echo "Usage: ddev private-registry [setup|mode <rewrite|daemon>|uninstall]" && exit 1 ;;
+esac

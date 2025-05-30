@@ -1,2 +1,1 @@
-.env.ddev-custom-image-registry
-.ddev/docker-compose.private-registry.yaml
+.env.ddev-private-registry

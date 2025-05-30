@@ -1,7 +1,0 @@
-images:
-  - ddev/ddev-webserver
-  - ddev/ddev-dbserver-mysql-5.7
-  - ddev/ddev-ssh-agent
-  - ddev/ddev-traefik-router
-  - solr:8
-  - busybox:stable

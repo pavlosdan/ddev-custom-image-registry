@@ -1,19 +1,22 @@
-name: ddev-custom-image-registry
-
-project_files:
-  - private-registry.yml.example: .ddev/private-registry.yml
-  - scripts/pre-start.sh: .ddev/commands/host/pre-start-private-registry
-other_items:
-  - env.ddev-custom-image-registry.example
-  - scripts/ask-credentials.sh
-  - scripts/apply-config.sh
-  - scripts/remove.sh
-
+name: ddev-private-registry
 ddev_version_constraint: '>= v1.24.2'
 
-actions:
-  post_install:
-    - exec-host: ["bash", "scripts/ask-credentials.sh"]
-    - exec-host: ["bash", "scripts/apply-config.sh"]
-  removal:
-    - exec-host: ["bash", "scripts/remove.sh"]
+project_files:
+  - config.ddev-private-registry.yaml
+  - private-registry/common.sh
+  - private-registry/install.sh
+  - private-registry/rewrite-mode.sh
+  - private-registry/daemon-mode.sh
+  - private-registry/config.example.yml
+  - private-registry/private-registry.sh
+  - docker-compose.ddev-private-registry.yaml
+  - commands/host/private-registry
+
+global_files:
+  - global/private-registry/.keep
+
+post_install_actions:
+  - echo "ddev-private-registry installed. Run 'ddev private-registry setup' to configure."
+
+removal_actions:
+  - bash private-registry/install.sh uninstall
