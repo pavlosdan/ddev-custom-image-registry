@@ -1,8 +1,8 @@
 #ddev-generated
 images:
-  web: ddev/ddev-webserver
-  db: ddev/ddev-dbserver-mysql-5.7
-  sshagent: ddev/ddev-ssh-agent
-  router: ddev/ddev-traefik-router
-  solr-8: solr:8
-  busybox-stable: busybox:stable
+  - ddev/ddev-webserver
+  - ddev/ddev-dbserver-mysql-5.7
+  - ddev/ddev-ssh-agent
+  - ddev/ddev-traefik-router
+  - solr:8
+  - busybox:stable

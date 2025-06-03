@@ -4,49 +4,68 @@
 set -e
 source "$DDEV_APPROOT"/.ddev/private-registry/common.sh
 
+echo "Private registry version: ${DDEV_PRIVATE_REGISTRY_VERSION}"
+
 OUTPUT_FILE="$DDEV_APPROOT/.ddev/docker-compose.ddev-private-registry.yaml"
 CONFIG_FILE="$DDEV_APPROOT/.ddev/private-registry/config.yml"
 [[ -f "$CONFIG_FILE" ]] || CONFIG_FILE="$DDEV_APPROOT/.ddev/private-registry/config.example.yml"
 
-[[ -z "${REGISTRY_URL:-}" ]] && { echo "private-registry: REGISTRY_URL not configured, skipping override."; exit 0; }
-
-# Parse image mapping: <service>: <image>
-mapfile -t pairs < <(
-  awk '
-    BEGIN { in=0 }
-    /^[[:space:]]*#/ { next } # skip comments
-    /^[[:space:]]*images:[[:space:]]*$/ { in=1; next } # enter images block
-    in==1 && /^[[:space:]]{2}/ {
-      line = $0
-      sub(/^[[:space:]]*/, "", line)
-      split(line, kv, ":")
-      svc = kv[1]
-      gsub(/[[:space:]]+$/, "", svc)
-      img = line
-      sub(/^[^:]*:[[:space:]]*/, "", img)
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "", img)
-      if (svc != "" && img != "") print svc "|" img
-      next
-    }
-    in==1 { exit }
-  ' "$CONFIG_FILE"
-)
-
-if [[ ${#pairs[@]} -eq 0 ]]; then
-  echo "private-registry: No images found in $CONFIG_FILE"
-  exit 0
+if [[ -z "${REGISTRY_URL:-}" ]]; then
+  echo "private-registry: REGISTRY_URL not configured, skipping override."
+  exit 1
 fi
 
-echo "Generating compose override -> $OUTPUT_FILE"
-{
-  echo "#ddev-generated"
-  echo "services:"
-  for pair in "${pairs[@]}" do
-    service="${pair%%|*}"
-    image="${pair#*|}"
-    echo "  ${service}:"
-    echo "    image: ${REGISTRY_URL}/${image}"
-  done
-} > "$OUTPUT_FILE"
+DDEV_VERSION="$(get_ddev_version)"
+echo "DDEV version is $DDEV_VERSION"
 
-echo "private-registry: wrote override in $OUTPUT_FILE"
+# Read image list to tag.
+IMAGES=()
+while IFS= read -r image; do
+  IMAGES+=("$image")
+done < <(yq -r '.images[]' "$CONFIG_FILE")
+
+if [[ ${#IMAGES[@]} -eq 0 ]]; then
+  echo "No images in $CONFIG_FILE"
+  exit 1
+fi
+
+pull_and_tag() {
+  local image="$1"
+  local base="${image%%:*}"
+  local explicit_tag="${image}"
+  [ "$base" = "$explicit" ] && explicit=""
+
+  echo "BASE IMAGE: $base"
+  echo "EXPLICIT: $explicit"
+  echo "IMAGE: $image"
+
+  if [[ "$base" == ddev/* || "$base" == drud/* ]]; then
+    tag="$DDEV_VERSION"
+  elif [[ -n "$explicit_tag" ]]; then
+    tag="$explicit_tag"
+  else
+    tag="latest"
+  fi
+
+  mirror_ref="${REGISTRY_URL}/${base}:${tag}"
+  local_ref="${base}:${tag}"
+
+  if docker image inspect "$local_ref" >/dev/null 2>&1; then
+    echo "$local_ref already cached"
+    return
+  fi
+
+  echo "Pulling $mirror_ref"
+  docker pull "$mirror_ref"
+
+  echo "Tagging $local_ref"
+  docker image tag "$mirror_ref" $local_ref
+}
+
+# Tag the images in the array.
+for image in "${IMAGES[@]}"; do
+  echo "Tagging $image"
+  pull_and_tag "$image"
+done
+
+echo "All images ready."
