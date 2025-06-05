@@ -7,3 +7,4 @@ images:
   - ddev/ddev-ssh-agent
   - ddev/ddev-traefik-router
   - solr:8
+  - busybox:stable
