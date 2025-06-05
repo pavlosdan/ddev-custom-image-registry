@@ -31,24 +31,27 @@ fi
 
 pull_and_tag() {
   local image="$1"
-  local base="${image%%:*}"
-  local explicit_tag="${image}"
-  [ "$base" = "$explicit" ] && explicit=""
+  local repo tag
 
-  echo "BASE IMAGE: $base"
-  echo "EXPLICIT: $explicit"
-  echo "IMAGE: $image"
-
-  if [[ "$base" == ddev/* || "$base" == drud/* ]]; then
-    tag="$DDEV_VERSION"
-  elif [[ -n "$explicit_tag" ]]; then
-    tag="$explicit_tag"
+  # Split the image into repo and tag for processing.
+  if [[ "$image" == *:* ]]; then
+    repo=${image%%:*}
+    tag=${image##*:}
   else
+    repo=$image
+    tag=""
+  fi
+
+  # If it's a ddev image tag the ddev version.
+  if [[ "$repo" == ddev/* || "$repo" == drud/* ]]; then
+    tag="$DDEV_VERSION"
+  # If no tag given, use latest.
+  elif [[ -z "$tag" ]]; then
     tag="latest"
   fi
 
-  mirror_ref="${REGISTRY_URL}/${base}:${tag}"
-  local_ref="${base}:${tag}"
+  local mirror_ref="${REGISTRY_URL}/${repo}:${tag}"
+  local local_ref="${repo}:${tag}"
 
   if docker image inspect "$local_ref" >/dev/null 2>&1; then
     echo "$local_ref already cached"
@@ -59,12 +62,11 @@ pull_and_tag() {
   docker pull "$mirror_ref"
 
   echo "Tagging $local_ref"
-  docker image tag "$mirror_ref" $local_ref
+  docker image tag "$mirror_ref" "$local_ref"
 }
 
 # Tag the images in the array.
 for image in "${IMAGES[@]}"; do
-  echo "Tagging $image"
   pull_and_tag "$image"
 done
 

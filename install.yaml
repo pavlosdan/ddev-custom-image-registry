@@ -9,7 +9,6 @@ project_files:
   - private-registry/daemon-mode.sh
   - private-registry/config.example.yml
   - private-registry/private-registry.sh
-  - docker-compose.ddev-private-registry.yaml
   - commands/host/private-registry
 
 global_files:
