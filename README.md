@@ -3,14 +3,14 @@ Easily pull DDEV container images from an authenticated **private mirror**.
 
 ## Install per‑project
 ```bash
-ddev get gh:your‑org/ddev-private-registry  # when published
+ddev get gh:pavlosdan/ddev-private-registry  # when published
 # follow prompts (select rewrite or daemon)
 ```
 
 ## Global install
 ```bash
 mkdir -p ~/.ddev/plugins && cd ~/.ddev/plugins
-git clone https://github.com/your-org/ddev-private-registry.git
+git clone https://github.com/pavlosdan/ddev-custom-image-registry.git ddev-private-registry
 cd ddev-private-registry
 ```
 ## Private registry modes
