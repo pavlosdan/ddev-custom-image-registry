@@ -12,29 +12,24 @@ ddev get gh:your‑org/ddev-private-registry  # when published
 mkdir -p ~/.ddev/plugins && cd ~/.ddev/plugins
 git clone https://github.com/your-org/ddev-private-registry.git
 cd ddev-private-registry
-bash scripts/ask-credentials.sh      # enter creds + pick backend
-bash scripts/apply-config.sh         # add sudo if you chose daemon
 ```
-All existing DDEV projects will now honour the mirror.
-
-## Back‑end modes
+## Private registry modes
 | Mode     | Privilege | How it works | Pros | Cons |
 |----------|-----------|--------------|------|------|
-| `rewrite` *(default)* | none | Generates a `docker-compose.override` with mirror prefixes | No sudo, works per project | Needs list of images in `private-registry.yml` |
-| `daemon` | sudo | Adds mirror to `/etc/docker/daemon.json` (Docker’s native support) | Mirrors *everything*, simplest | Requires root + Docker restart |
+| `rewrite` *(default)* | none | Pulls and tags the images from the private registry. | No sudo, works per project | Needs list of images in `private-registry/config.example.com` |
+| `daemon` | sudo | Adds mirror to `/etc/docker/daemon.json` (Docker’s native support) | Mirrors *everything*, simplest | Requires linux host + root + Docker restart |
 
-Switch later by editing `.env` → change `BACKEND=` then run `scripts/apply-config.sh` (sudo for daemon).
+Switch later by editing `.env.ddev-private-registry` → change `PR_MODE=` then run `ddev restart` (sudo for daemon).
 
 ## Configuring which images are mirrored (rewrite)
-Edit `.ddev/private-registry.yml`:
+Edit `.ddev/private-registry/config.example.yml`:
 ```yaml
 images:
-  - ddev/*          # glob OK
+  - ddev/ddev-webserver
   - myorg/custom:8.3
 ```
 
 ## Uninstall
 ```bash
-ddev add‑on remove ddev-private-registry   # per‑project
-~/.ddev/plugins/ddev-private-registry/scripts/remove.sh   # global
+ddev add‑on remove ddev-private-registry
 ```
