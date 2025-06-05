@@ -40,3 +40,9 @@ docker_login() {
     echo "$REGISTRY_PASS" | docker login "$REGISTRY_URL" --username "$REGISTRY_USER" --password-stdin >/dev/null 2>&1 || true
   fi
 }
+
+get_ddev_version() {
+  local ddev_version
+  ddev_version="$(ddev --version 2>/dev/null | awk '{print $NF}')"
+  echo "$ddev_version"
+}
