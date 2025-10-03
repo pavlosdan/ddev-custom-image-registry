@@ -42,10 +42,13 @@ pull_and_tag() {
     tag=""
   fi
 
-  # If it's a ddev image tag the ddev version.
+  # If it's a ddev/drud image, only tag with the DDEV version when no explicit
+  # tag was provided in the config (preserve explicit tags like :latest).
   if [[ "$repo" == ddev/* || "$repo" == drud/* ]]; then
-    tag="$DDEV_VERSION"
-  # If no tag given, use latest.
+    if [[ -z "$tag" ]]; then
+      tag="$DDEV_VERSION"
+    fi
+  # If no tag given (and not a ddev/drud image), use latest.
   elif [[ -z "$tag" ]]; then
     tag="latest"
   fi
