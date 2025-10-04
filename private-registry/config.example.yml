@@ -6,5 +6,8 @@ images:
   - ddev/ddev-dbserver-mariadb-10.11
   - ddev/ddev-ssh-agent
   - ddev/ddev-traefik-router
+  - ddev/ddev-utilities:latest
+  - ddev/ddev-xhgui:latest
   - solr:8
   - busybox:stable
+  - adminer:latest
